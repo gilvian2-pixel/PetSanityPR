@@ -745,7 +745,20 @@ function sendToWhatsApp() {
   if (notes) msg += `💬 *Notas:* ${notes}\n`;
   if (hasPhotos) msg += `📸 *Fotos:* Tengo fotos del patio para compartir\n`;
   msg += `\n⚠️ _Entiendo que este es un estimado y el precio final se confirma en la primera visita._`;
-
+  
+// — Enviar a Google Apps Script —
+    fetch(https://script.google.com/macros/s/AKfycbz56NciIjXsO-vPHSdSVHRCKdBWb29B-4Em5s-cj3HNCCx6JcCtY2iOz0V4kmycIhBCpQ/exec, {
+      method: 'POST',
+      body: JSON.stringify({
+        nombre: name,
+        whatsapp: phone,
+        zona: zone,
+        tamano: sizeText,
+        perros: dogs,
+        servicios: services,
+        notas: notes
+      })
+    }).catch(() => {});
   openWAPicker(msg);
 }
 
