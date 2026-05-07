@@ -747,6 +747,11 @@ function sendToWhatsApp() {
   msg += `\n⚠️ _Entiendo que este es un estimado y el precio final se confirma en la primera visita._`;
   
 // — Enviar a Google Apps Script —
+    const btn = document.querySelector('.submit-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ Enviando...';
+    btn.disabled = true;
+
     fetch(https://script.google.com/macros/s/AKfycbz56NciIjXsO-vPHSdSVHRCKdBWb29B-4Em5s-cj3HNCCx6JcCtY2iOz0V4kmycIhBCpQ/exec, {
       method: 'POST',
       body: JSON.stringify({
@@ -758,8 +763,20 @@ function sendToWhatsApp() {
         servicios: services,
         notas: notes
       })
-    }).catch(() => {});
-  openWAPicker(msg);
+    })
+    .then(() => {
+      btn.innerHTML = '✅ ¡Enviado!';
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }, 3000);
+      alert('¡Cotización enviada! Te contactamos pronto por WhatsApp. 🐾');
+    })
+    .catch(() => {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+      alert('❌ Hubo un error. Por favor intenta de nuevo.');
+    });
 }
 
 // ── Scroll reveal ──────────────────────────────────
