@@ -688,7 +688,7 @@ function showPreviews(input) {
 }
 
 // ── Send to Email via Google Apps Script ───────────
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz56NciIjXsO-vPHSdSVHRCKdBWb29B-4Em5s-cj3HNCCx6JcCtY2iOz0V4kmycIhBCpQ/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdwpifqbeGWTIdtnHMdmYGYdVtzli6WOyQ-tqUNC9DK680d6aNHtZUhdgk8nrEeW2r7w/exec';
 
 function sendToEmail() {
   const name   = document.getElementById('f-name').value.trim();
@@ -741,16 +741,23 @@ function sendToEmail() {
   btn.disabled = true;
   btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:10px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="white" style="animation:spin 1s linear infinite"><path d="M12 2a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8V2z"/></svg>Enviando...</span>';
 
-  // Enviamos como text/plain para evitar CORS preflight
-  // El Apps Script lee e.postData.contents y hace JSON.parse — ✅ compatible
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain' },
-    body: payload
+  // GET con parámetros en la URL — sobrevive la redirección interna de Google Apps Script
+  const params = new URLSearchParams({
+    name:    name,
+    email:   email,
+    phone:   phone,
+    address: zone,
+    service: services || 'Sin especificar',
+    dogs:    dogs,
+    message: mensaje
+  });
+
+  fetch(`${SCRIPT_URL}?${params.toString()}`, {
+    method: 'GET',
+    mode: 'no-cors'
   })
   .then(() => mostrarExito())
-  .catch(() => mostrarExito()); // no-cors no devuelve respuesta, asumimos éxito
+  .catch(() => mostrarExito());
 }
 
 function mostrarExito() {
