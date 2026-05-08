@@ -612,7 +612,7 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
       <div class="exito-icon">🎉</div>
       <h3>¡Cotización recibida!</h3>
       <p>Gracias por contactarnos. Recibimos tu solicitud y te contactaremos pronto con tu estimado personalizado.</p>
-      <a href="#servicios" class="btn btn-green">← Ver servicios</a>
+      <button type="button" onclick="resetCotizacion()" class="btn btn-green" style="border:none;cursor:pointer;font-family:'Nunito',sans-serif;">← Volver al inicio</button>
     </div>
 
   </div>
@@ -686,7 +686,37 @@ function showPreviews(input) {
 // ── Send to Email via Google Apps Script ───────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdwpifqbeGWTIdtnHMdmYGYdVtzli6WOyQ-tqUNC9DK680d6aNHtZUhdgk8nrEeW2r7w/exec';
 
-function sendToEmail() {
+// Comprime una imagen a max 1200px lado largo, calidad 0.7, devuelve base64
+function compressImage(file, maxSize = 1200, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxSize) {
+          height = Math.round(height * (maxSize / width));
+          width = maxSize;
+        } else if (height > maxSize) {
+          width = Math.round(width * (maxSize / height));
+          height = maxSize;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        // toDataURL devuelve "data:image/jpeg;base64,...."
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function sendToEmail() {
   const name   = document.getElementById('f-name').value.trim();
   const email  = document.getElementById('f-email').value.trim();
   const phone  = document.getElementById('f-phone').value.trim();
@@ -712,45 +742,49 @@ function sendToEmail() {
   const services = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
     .map(cb => cb.value).join(', ');
 
-  const hasPhotos = document.getElementById('f-photos').files.length > 0;
-
-  // Mensaje completo que llega al email
-  const mensaje = [
-    notes ? `Notas: ${notes}` : '',
-    `Tamaño del patio: ${sizeMap[size] || size}`,
-    hasPhotos ? '📸 El cliente tiene fotos del patio para compartir.' : ''
-  ].filter(Boolean).join('\n');
-
-  // JSON con los mismos nombres que usa el Apps Script
-  const payload = JSON.stringify({
-    name:    name,
-    email:   email,
-    phone:   phone,
-    address: zone,
-    service: services || 'Sin especificar',
-    dogs:    dogs,
-    message: mensaje
-  });
+  const photoFiles = Array.from(document.getElementById('f-photos').files).slice(0, 5);
 
   // Cambiar botón a estado cargando
   const btn = document.querySelector('.submit-btn');
   btn.disabled = true;
   btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:10px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="white" style="animation:spin 1s linear infinite"><path d="M12 2a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8V2z"/></svg>Enviando...</span>';
 
-  // GET con parámetros en la URL — sobrevive la redirección interna de Google Apps Script
-  const params = new URLSearchParams({
-    name:    name,
-    email:   email,
-    phone:   phone,
-    address: zone,
-    service: services || 'Sin especificar',
-    dogs:    dogs,
-    message: mensaje
-  });
+  // Comprimir fotos en paralelo
+  let photosBase64 = [];
+  try {
+    if (photoFiles.length > 0) {
+      photosBase64 = await Promise.all(photoFiles.map(f => compressImage(f)));
+    }
+  } catch (err) {
+    console.warn('Error comprimiendo fotos:', err);
+  }
 
-  fetch(`${SCRIPT_URL}?${params.toString()}`, {
-    method: 'GET',
-    mode: 'no-cors'
+  const mensaje = [
+    notes ? `Notas: ${notes}` : '',
+    `Tamaño del patio: ${sizeMap[size] || size}`,
+    photosBase64.length > 0 ? `📸 ${photosBase64.length} foto(s) adjuntas.` : ''
+  ].filter(Boolean).join('\n');
+
+  // Enviar como POST con application/x-www-form-urlencoded — sobrevive 'no-cors' y Apps Script lo lee en e.parameter
+  const formData = new URLSearchParams();
+  formData.append('name', name);
+  formData.append('email', email);
+  formData.append('phone', phone);
+  formData.append('address', zone);
+  formData.append('service', services || 'Sin especificar');
+  formData.append('dogs', dogs);
+  formData.append('message', mensaje);
+  // Cada foto como un campo separado photo0, photo1, ...
+  photosBase64.forEach((dataUrl, i) => {
+    formData.append('photo' + i, dataUrl);
+  });
+  formData.append('photoCount', String(photosBase64.length));
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+    body: formData.toString()
   })
   .then(() => mostrarExito())
   .catch(() => mostrarExito());
@@ -759,6 +793,40 @@ function sendToEmail() {
 function mostrarExito() {
   document.getElementById('cotiza-form').style.display = 'none';
   document.getElementById('cotiza-exito').style.display = 'block';
+  // Scroll suave al mensaje de éxito para que el usuario lo vea
+  document.getElementById('cotiza-exito').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetCotizacion() {
+  // Limpiar campos
+  ['f-name','f-email','f-phone','f-zone','f-size','f-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-dogs').value = '1';
+  const photoInput = document.getElementById('f-photos');
+  if (photoInput) photoInput.value = '';
+  const previewContainer = document.getElementById('preview-container');
+  if (previewContainer) previewContainer.innerHTML = '';
+
+  // Resetear checkboxes — solo "Servicio Completo" queda marcado por default
+  document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(cb => {
+    cb.checked = cb.value.startsWith('Servicio Completo');
+  });
+
+  // Resetear botón submit
+  const btn = document.querySelector('.submit-btn');
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Enviar cotización por email';
+  }
+
+  // Mostrar formulario, ocultar éxito
+  document.getElementById('cotiza-form').style.display = 'block';
+  document.getElementById('cotiza-exito').style.display = 'none';
+
+  // Scroll al inicio de la página
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ── Scroll reveal ──────────────────────────────────
