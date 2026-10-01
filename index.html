@@ -580,10 +580,12 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
         <div class="form-group full">
           <label><span class="emoji">✅</span> ¿Qué servicios te interesan?</label>
           <div style="font-size:12px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">🏠 Residencial</div>
-          <div class="checkbox-group" style="margin-bottom:14px;">
-            <label class="check-option"><input type="checkbox" id="f-limpieza" value="Limpieza de patio semanal ($20/semana)" checked><span>🏠💧🧪 Limpieza de patio: $20/semana</span></label>
-            <label class="check-option"><input type="checkbox" id="f-cuido" value="Cuido corto de mascota"><span>🧳🐕 Cuido corto: ¿te vas de viaje?</span></label>
+          <div class="checkbox-group res-group" style="margin-bottom:6px;">
+            <label class="check-option svc-opt"><input type="checkbox" id="f-limpieza" value="Limpieza de patio semanal ($20/semana)" checked><span><strong>🏠 Limpieza de patio</strong><small>Recogido, desodorización y desinfección. 1 visita semanal.</small><b class="svc-opt-price">$20/semana</b></span></label>
+            <label class="check-option svc-opt"><input type="checkbox" id="f-cuido-a" value="Cuido corto Opción A: patio + alimentación ($25/día)"><span><strong>🧳 Cuido corto A</strong><small>Limpieza de patio + alimentación. 1 visita diaria.</small><b class="svc-opt-price">$25/día</b></span></label>
+            <label class="check-option svc-opt"><input type="checkbox" id="f-cuido-b" value="Cuido corto Opción B: patio + alimentación + paseo 15 min ($45/día)"><span><strong>🐕 Cuido corto B</strong><small>Limpieza de patio + alimentación + paseo de 15 min. 1 visita diaria.</small><b class="svc-opt-price">$45/día</b></span></label>
           </div>
+          <div style="font-size:12px;color:var(--text-light);margin-bottom:16px;">Precios para hasta 2 mascotas. Más mascotas o más visitas se cotizan aparte.</div>
           <div style="font-size:12px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">🏢 Comercial</div>
           <div class="checkbox-group">
             <label class="check-option"><input type="checkbox" value="Condo / HOA"><span>🏢 Condo / HOA</span></label>
@@ -603,10 +605,6 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
 
         <div class="form-group full" id="sched-cuido" style="display:none;">
           <label><span class="emoji">🧳</span> ¿Qué días estarás de viaje?</label>
-          <div class="cuido-opts">
-            <label class="check-option"><input type="radio" name="f-cuido-opt" value="A"><span><strong>Opción A: $25/día</strong><br><small>Limpieza de patio + alimentación</small></span></label>
-            <label class="check-option"><input type="radio" name="f-cuido-opt" value="B" checked><span><strong>Opción B: $45/día</strong><br><small>Patio + alimentación + paseo de 15 min</small></span></label>
-          </div>
           <div class="sched-hint">Toca el <strong>primer día</strong> y luego el <strong>último día</strong> que necesitas cuido. ¿Es un solo día? Tócalo dos veces.</div>
           <div class="cal" id="cal-cuido"></div>
           <div class="cal-picked" id="cal-cuido-picked">Escoge tus fechas</div>
@@ -829,7 +827,7 @@ async function sendToEmail() {
     .map(cb => cb.value).join(', ');
 
   // Agenda
-  const wantsCuido = document.getElementById('f-cuido').checked;
+  const wantsCuido = isCuido();
   const wantsVisit = needsVisitDate();
   if (!services) { alert('Por favor escoge al menos un servicio ✅'); return; }
   if (wantsVisit && !calVisit.start) { alert('Por favor escoge el día de tu primera visita 📅'); return; }
@@ -936,7 +934,6 @@ function resetCotizacion() {
     cb.checked = cb.id === 'f-limpieza';
   });
   document.getElementById('f-double').checked = false;
-  document.querySelector('input[name="f-cuido-opt"][value="B"]').checked = true;
   calVisit.clear(); calCuido.clear();
   syncSchedule();
 
@@ -998,9 +995,11 @@ function visitMinutes() {
   return m || 60;
 }
 // Minutos por día que necesita el cuido (cada visita + su traslado)
+function isCuido() {
+  return document.getElementById('f-cuido-a').checked || document.getElementById('f-cuido-b').checked;
+}
 function cuidoOption() {
-  const r = document.querySelector('input[name="f-cuido-opt"]:checked');
-  return r ? r.value : 'B';
+  return document.getElementById('f-cuido-a').checked ? 'A' : 'B';
 }
 function cuidoMinutesPerDay() {
   const visits = document.getElementById('f-double').checked ? 2 : 1;
@@ -1160,16 +1159,17 @@ function updateCuidoEstimate() {
 }
 
 function needsVisitDate() {
-  return Array.from(document.querySelectorAll('.checkbox-group input:checked')).some(cb => cb.id !== 'f-cuido');
+  return Array.from(document.querySelectorAll('.checkbox-group input:checked')).some(cb => !cb.id.startsWith('f-cuido'));
 }
 function syncSchedule() {
   document.getElementById('sched-visit').style.display = needsVisitDate() ? '' : 'none';
-  document.getElementById('sched-cuido').style.display = document.getElementById('f-cuido').checked ? '' : 'none';
+  document.getElementById('sched-cuido').style.display = isCuido() ? '' : 'none';
   calVisit.render();   // la duración de la visita depende de servicios y tamaño
   updateCuidoEstimate();
 }
 function preselectService(which) {
-  document.getElementById(which === 'cuido' ? 'f-cuido' : 'f-limpieza').checked = true;
+  document.getElementById(which === 'cuido' ? 'f-cuido-b' : 'f-limpieza').checked = true;
+  if (which === 'cuido') document.getElementById('f-cuido-a').checked = false;
   syncSchedule();
 }
 
@@ -1179,7 +1179,11 @@ calCuido.render();
 document.querySelectorAll('.checkbox-group input').forEach(cb => cb.addEventListener('change', syncSchedule));
 document.getElementById('f-size').addEventListener('change', () => calVisit.render());
 document.getElementById('f-double').addEventListener('change', () => calCuido.render());
-document.querySelectorAll('input[name="f-cuido-opt"]').forEach(r => r.addEventListener('change', () => calCuido.render()));
+// Cuido A y B: solo una a la vez
+['f-cuido-a', 'f-cuido-b'].forEach((id, i, ids) => document.getElementById(id).addEventListener('change', e => {
+  if (e.target.checked) document.getElementById(ids[1 - i]).checked = false;
+  calCuido.render();
+}));
 const _origChangeDogs = changeDogs;
 changeDogs = d => { _origChangeDogs(d); updateCuidoEstimate(); };
 syncSchedule();
@@ -1233,9 +1237,13 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 .cal-note { font-size:12px; color:var(--brown); margin-top:6px; }
 .cal-picked { font-size:14px; font-weight:700; color:var(--text-light); }
 .cal-picked.ok { color:var(--green-mid); }
-.cuido-opts { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.cuido-opts small { font-weight:500; color:var(--text-mid); }
-@media(max-width:620px){ .cuido-opts { grid-template-columns:1fr; } }
+.res-group { grid-template-columns:repeat(3,1fr); }
+.svc-opt { align-items:flex-start; }
+.svc-opt input { margin-top:3px; }
+.svc-opt span { display:flex; flex-direction:column; gap:2px; line-height:1.35; }
+.svc-opt small { font-weight:500; color:var(--text-mid); font-size:12.5px; }
+.svc-opt-price { font-family:'Fredoka',sans-serif; font-size:18px; color:var(--green); margin-top:6px; }
+@media(max-width:820px){ .res-group { grid-template-columns:1fr; } }
 .cuido-est { background:#F0FAF6; border:2px solid var(--green); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--green-dark); }
 </style>
 </body>
