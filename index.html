@@ -82,6 +82,13 @@ nav{position:sticky;top:0;z-index:100;background:var(--green-dark);padding:0 24p
 .zone-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
 .zone{background:var(--brown-light);color:var(--brown);padding:4px 12px;border-radius:50px;font-size:13px;font-weight:700;}
 @media(max-width:800px){.hero-inner{grid-template-columns:1fr;}.hero-visual{display:none;}}
+.hz-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.hz-row{display:flex;align-items:center;gap:12px;background:var(--gray);border-radius:12px;padding:10px 14px;}
+.hz-ico{font-size:22px;}
+.hz-name{font-family:'Fredoka',sans-serif;font-size:17px;font-weight:700;color:var(--green-dark);line-height:1.2;}
+.hz-sub{font-size:12px;color:var(--text-mid);}
+.hero-zones-mobile{display:none;flex-wrap:wrap;gap:6px;align-items:center;margin-top:22px;color:rgba(255,255,255,.8);font-size:13px;font-weight:700;}
+@media(max-width:800px){.hero-zones-mobile{display:flex;}}
 
 /* ── SERVICES ─────────────────────────────────────── */
 .services{padding:100px 24px;}
@@ -279,23 +286,48 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
       <div class="hero-ctas fade-up d4">
         <a class="btn btn-yellow" href="#cotiza">📋 Cotiza gratis</a>
       </div>
+      <div class="hero-zones-mobile fade-up d4">
+        <span>📍 Servimos:</span>
+        <span class="zone">San Juan</span><span class="zone">Guaynabo</span><span class="zone">Bayamón</span><span class="zone">Carolina</span><span class="zone">Dorado</span>
+      </div>
     </div>
     <div class="hero-visual fade-up d3">
       <div class="hero-card">
         <div class="hero-card-title">📍 Servimos estas zonas</div>
-        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
-          <div style="display:flex;align-items:center;gap:14px;background:var(--gray);border-radius:14px;padding:16px 18px;">
-            <span style="font-size:28px;">🗺️</span>
+        <div class="hz-list">
+          <div class="hz-row">
+            <span class="hz-ico">🗺️</span>
             <div>
-              <div style="font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--green-dark);">San Juan</div>
-              <div style="font-size:13px;color:var(--text-mid);">Todos los sectores</div>
+              <div class="hz-name">San Juan</div>
+              <div class="hz-sub">Todos los sectores</div>
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:14px;background:var(--gray);border-radius:14px;padding:16px 18px;">
-            <span style="font-size:28px;">📍</span>
+          <div class="hz-row">
+            <span class="hz-ico">📍</span>
             <div>
-              <div style="font-family:'Fredoka',sans-serif;font-size:20px;font-weight:700;color:var(--green-dark);">Guaynabo</div>
-              <div style="font-size:13px;color:var(--text-mid);">Garden Hills, Villa Caparra y más</div>
+              <div class="hz-name">Guaynabo</div>
+              <div class="hz-sub">Garden Hills, Villa Caparra y más</div>
+            </div>
+          </div>
+          <div class="hz-row">
+            <span class="hz-ico">📍</span>
+            <div>
+              <div class="hz-name">Bayamón</div>
+              <div class="hz-sub">Todos los sectores</div>
+            </div>
+          </div>
+          <div class="hz-row">
+            <span class="hz-ico">📍</span>
+            <div>
+              <div class="hz-name">Carolina</div>
+              <div class="hz-sub">Todos los sectores</div>
+            </div>
+          </div>
+          <div class="hz-row">
+            <span class="hz-ico">📍</span>
+            <div>
+              <div class="hz-name">Dorado</div>
+              <div class="hz-sub">Todos los sectores</div>
             </div>
           </div>
         </div>
@@ -552,8 +584,22 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
               <option>Guaynabo: Urb. Universitaria</option>
               <option>Guaynabo: Otro sector</option>
             </optgroup>
+            <optgroup label="Bayamón">
+              <option>Bayamón</option>
+            </optgroup>
+            <optgroup label="Carolina">
+              <option>Carolina</option>
+            </optgroup>
+            <optgroup label="Dorado">
+              <option>Dorado</option>
+            </optgroup>
             <option value="Otra zona">Otra zona (escríbenos)</option>
           </select>
+        </div>
+
+        <div class="form-group">
+          <label><span class="emoji">🏡</span> Dirección <span style="font-weight:400;color:var(--text-light)">(opcional)</span></label>
+          <input type="text" id="f-street" placeholder="Calle, número, urbanización" autocomplete="street-address">
         </div>
 
         <div class="form-group">
@@ -687,6 +733,9 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
       <div class="footer-zones" style="margin-top:16px;">
         <span class="footer-zone">San Juan</span>
         <span class="footer-zone">Guaynabo</span>
+        <span class="footer-zone">Bayamón</span>
+        <span class="footer-zone">Carolina</span>
+        <span class="footer-zone">Dorado</span>
       </div>
     </div>
     <div class="footer-col">
@@ -808,6 +857,7 @@ async function sendToEmail() {
   const size   = document.getElementById('f-size').value;
   const dogs   = document.getElementById('f-dogs').value;
   const notes  = document.getElementById('f-notes').value.trim();
+  const street = document.getElementById('f-street').value.trim();
 
   if (!name)  { alert('Por favor escribe tu nombre 👤'); return; }
   if (!email) { alert('Por favor escribe tu email ✉️'); return; }
@@ -890,6 +940,7 @@ async function sendToEmail() {
     email:   email,
     phone:   phone,
     address: zone,
+    street:  street,
     service: services || 'Sin especificar',
     dogs:    dogs,
     message: mensaje,
@@ -919,7 +970,7 @@ function mostrarExito() {
 
 function resetCotizacion() {
   // Limpiar campos
-  ['f-name','f-email','f-phone','f-zone','f-size','f-notes'].forEach(id => {
+  ['f-name','f-email','f-phone','f-zone','f-street','f-size','f-notes'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
