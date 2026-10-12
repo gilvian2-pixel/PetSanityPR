@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BRCFC6XENZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-BRCFC6XENZ');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pet Sanity PR | Limpieza y Cuidado Profesional</title>
@@ -953,6 +961,12 @@ async function sendToEmail() {
     cuidoOption: wantsCuido ? cuidoOption() : ''
   });
 
+  // Analytics: cotización enviada
+  if (window.gtag) gtag('event', 'generate_lead', {
+    servicio: services || 'Sin especificar',
+    zona: zone
+  });
+
   fetch(`${SCRIPT_URL}?${params.toString()}`, {
     method: 'GET',
     mode: 'no-cors'
@@ -1243,7 +1257,11 @@ syncSchedule();
 const WA_TEXT = 'Hola Pet Sanity PR 👋 Tengo una pregunta: ';
 document.querySelectorAll('[data-wa]').forEach(a => {
   a.href = 'https://wa.me/' + a.dataset.wa + '?text=' + encodeURIComponent(WA_TEXT);
-  a.addEventListener('click', () => setTimeout(closeWA, 300));
+  a.addEventListener('click', () => {
+    // Analytics: clic en WhatsApp
+    if (window.gtag) gtag('event', 'whatsapp_click', { numero: a.dataset.wa });
+    setTimeout(closeWA, 300);
+  });
 });
 function openWA(e) { if (e) e.preventDefault(); document.getElementById('wa-overlay').classList.add('open'); }
 function closeWA() { document.getElementById('wa-overlay').classList.remove('open'); }
