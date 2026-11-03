@@ -273,7 +273,13 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
       <li><a href="#como-funciona">¿Cómo funciona?</a></li>
       <li><a href="#cotiza">Cotiza</a></li>
     </ul>
-    <a class="btn btn-yellow" href="#cotiza" style="padding:10px 20px;font-size:15px;">📋 Cotiza gratis</a>
+    <div class="nav-right">
+      <div class="lang-toggle" role="group" aria-label="Idioma / Language">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="btn btn-yellow nav-cta" href="#cotiza" style="padding:10px 20px;font-size:15px;">📋 Cotiza gratis</a>
+    </div>
   </div>
 </nav>
 
@@ -773,6 +779,219 @@ footer{background:var(--green-dark);padding:60px 24px 32px;color:rgba(255,255,25
 </footer>
 
 <script>
+// ── Idioma (ES / EN) ───────────────────────────────
+// El texto fijo se traduce con I18N (español → inglés). Lo que el JS dibuja usa L('es', 'en').
+// Lo que se envía al negocio (servicios, zona, email) se queda en español.
+let LANG = 'es';
+const L = (es, en) => LANG === 'en' ? en : es;
+const I18N = {
+"Servicios": "Services",
+"¿Cómo funciona?": "How it works",
+"Cotiza": "Quote",
+"📋 Cotiza gratis": "📋 Free quote",
+"🐾 Puerto Rico": "🐾 Puerto Rico",
+"Patio limpio.": "Clean yard.",
+"Mente tranquila.": "Peace of mind.",
+"Somos el primer servicio profesional de recogida de desechos, desodorización y sanitización de patios en Puerto Rico.": "We are Puerto Rico's first professional pet waste removal, deodorizing and yard sanitizing service.",
+"Nosotros lo hacemos, tú lo disfrutas.": "We do the work, you enjoy the yard.",
+"📍 Servimos:": "📍 We serve:",
+"📍 Servimos estas zonas": "📍 Areas we serve",
+"Todos los sectores": "All neighborhoods",
+"Garden Hills, Villa Caparra y más": "Garden Hills, Villa Caparra and more",
+"💡 ¿Fuera de estas zonas?": "💡 Outside these areas?",
+"Escríbenos, seguimos expandiendo.": "Message us, we keep expanding.",
+"Nuestros servicios": "Our services",
+"Todo lo que necesitas": "Everything you need",
+"para un patio impecable 🌿": "for a spotless yard 🌿",
+"Servicios claros, sin sorpresas. Escoge el que se adapta a tu estilo.": "Clear services, no surprises. Pick the one that fits your lifestyle.",
+"🏠 Servicios Residenciales": "🏠 Residential Services",
+"⭐ Más Popular": "⭐ Most Popular",
+"Limpieza de Patio": "Yard Cleaning",
+"Una visita semanal y nos encargamos de": "One weekly visit and we take care of",
+"todo": "everything",
+": recogemos los desechos, desodorizamos el área y desinfectamos contra bacterias y parvo. Tu patio queda impecable sin que tengas que hacer nada.": ": we pick up the waste, deodorize the area and disinfect against bacteria and parvo. Your yard is left spotless without you lifting a finger.",
+"Incluido en cada visita:": "Included in every visit:",
+"Recogido completo:": "Full pickup:",
+"todos los desechos recogidos y removidos del área": "all waste picked up and removed from the area",
+"Desodorización:": "Deodorizing:",
+"eliminamos el olor desde la raíz": "we eliminate odor at the source",
+"Desinfección:": "Disinfection:",
+"mata parvo y bacterias. Seguro para tu perro una vez seco": "kills parvo and bacteria. Safe for your dog once dry",
+"Foto antes y después": "Before and after photos",
+"por WhatsApp al terminar cada visita": "by WhatsApp after every visit",
+"/semana": "/week",
+"1 visita semanal · hasta 2 mascotas": "1 weekly visit · up to 2 pets",
+"¿Más mascotas o más de 1 visita por semana? Te cotizamos.": "More pets or more than 1 visit a week? We'll give you a quote.",
+"📋 Cotiza gratis →": "📋 Free quote →",
+"🆕 Nuevo": "🆕 New",
+"Cuido Corto de Mascota": "Short-Term Pet Care",
+"¿Te vas de viaje corto? Tu mascota se queda en casa, tranquila y en su ambiente. Pasamos todos los días a limpiar el patio y servirle su comida. Y si quieres, la sacamos a pasear. Te mandamos foto diaria por WhatsApp.": "Going on a short trip? Your pet stays home, calm and in familiar surroundings. We stop by every day to clean the yard and serve their food. If you'd like, we also take them for a walk. You get a daily photo by WhatsApp.",
+"Opción A": "Option A",
+"Limpieza de patio + alimentación": "Yard cleaning + feeding",
+"Comida y agua fresca · foto diaria": "Food and fresh water · daily photo",
+"/día": "/day",
+"Opción B ⭐": "Option B ⭐",
+"Limpieza de patio + alimentación + paseo de 15 min": "Yard cleaning + feeding + 15-min walk",
+"Comida y agua fresca · paseo · foto diaria": "Food and fresh water · walk · daily photo",
+"1 visita diaria · cubre hasta 2 mascotas": "1 daily visit · covers up to 2 pets",
+"¿Más de 2 mascotas o más de 1 visita al día? Te cotizamos.": "More than 2 pets or more than 1 visit a day? We'll give you a quote.",
+"🧳 Reserva tus fechas →": "🧳 Book your dates →",
+"🏢 Servicios Comerciales": "🏢 Commercial Services",
+"Mantenemos las áreas comunes para mascotas limpias y sin olor. Un contrato recurrente para toda la propiedad, cero dolores de cabeza para el administrador.": "We keep common pet areas clean and odor-free. One recurring contract for the whole property, zero headaches for the property manager.",
+"/mes": "/month",
+"Basado en capacidad y área del edificio": "Based on building size and capacity",
+"Cotizar →": "Get a quote →",
+"Estaciones de Desechos": "Pet Waste Stations",
+"Instalamos y mantenemos estaciones de bolsas para condominios y propiedades con áreas de paseo. Renta mensual incluye reabastecimiento y mantenimiento.": "We install and maintain bag stations for condos and properties with walking areas. Monthly rental includes restocking and maintenance.",
+"Instalación + mantenimiento + bolsas": "Installation + maintenance + bags",
+"Preguntar →": "Ask us →",
+"Eventos Especiales": "Special Events",
+"Dog parks, ferias de mascotas, eventos al aire libre. Nos encargamos de la limpieza para que tú y tus invitados disfruten sin preocupaciones.": "Dog parks, pet fairs, outdoor events. We handle the cleanup so you and your guests can enjoy worry-free.",
+"Por evento · cotización personalizada": "Per event · custom quote",
+"Así de fácil": "That easy",
+"3 pasos y listo 🐶": "3 steps and done 🐶",
+"No tienes que hacer nada, excepto disfrutar tu patio.": "You don't have to do a thing except enjoy your yard.",
+"Cuéntanos de tu patio": "Tell us about your yard",
+"Completa el formulario con el tamaño de tu patio, cuántos perros tienes y fotos si puedes. Te damos una estimación en minutos.": "Fill out the form with your yard size, how many dogs you have and photos if you can. We'll send you an estimate within minutes.",
+"Primera visita gratis": "Free first visit",
+"Agendamos tu primera visita de evaluación. Confirmamos el precio final en persona y dejamos tu patio impecable ese mismo día.": "We schedule your first evaluation visit. We confirm the final price in person and leave your yard spotless that same day.",
+"Tú te relajas, nosotros trabajamos": "You relax, we do the work",
+"Llegamos, limpiamos, te enviamos foto de antes y después por WhatsApp, y te fuiste. Semana tras semana, sin estrés.": "We show up, clean, send you before and after photos by WhatsApp, and that's it. Week after week, stress-free.",
+"¿Por qué Pet Sanity PR?": "Why Pet Sanity PR?",
+"Limpieza y Cuidado Profesional": "Professional Cleaning & Care",
+"Te enviamos fotos por WhatsApp de cada visita para que veas el trabajo en tiempo real.": "We send you WhatsApp photos of every visit so you can see the work in real time.",
+"Desodorización tropical": "Tropical deodorizing",
+"El calor de PR hace que los olores sean peores. Nuestro spray enzimático los elimina desde la raíz.": "Puerto Rico's heat makes odors worse. Our enzyme spray eliminates them at the source.",
+"Sin contratos largos": "No long-term contracts",
+"Cancela cuando quieras. Confiamos en nuestro trabajo, no en letra chica.": "Cancel anytime. We trust our work, not fine print.",
+"Cotiza en 2 minutos": "Get a quote in 2 minutes",
+"¿Cuánto costaría": "How much would",
+"tu patio limpio? 🐾": "a clean yard cost? 🐾",
+"Comparte los detalles de tu patio y te enviamos una estimación por email. Sin compromisos.": "Share your yard details and we'll email you an estimate. No commitment.",
+"Tu nombre": "Your name",
+"Tu email": "Your email",
+"Tu número de teléfono": "Your phone number",
+"¿En qué zona estás?": "What area are you in?",
+"Selecciona tu área": "Select your area",
+"Otro sector de San Juan": "Other San Juan neighborhood",
+"Guaynabo: Otro sector": "Guaynabo: Other neighborhood",
+"Otra zona (escríbenos)": "Other area (message us)",
+"Dirección": "Address",
+"(opcional)": "(optional)",
+"Tamaño estimado del patio": "Estimated yard size",
+"Selecciona un tamaño": "Select a size",
+"Pequeño: menos de 500 ft²": "Small: under 500 sq ft",
+"Mediano: 500 a 1,000 ft²": "Medium: 500 to 1,000 sq ft",
+"Grande: 1,000 a 2,000 ft²": "Large: 1,000 to 2,000 sq ft",
+"Extra grande: más de 2,000 ft²": "Extra large: over 2,000 sq ft",
+"No estoy seguro/a": "Not sure",
+"¿Cuántas mascotas tienes?": "How many pets do you have?",
+"¿Qué servicios te interesan?": "Which services are you interested in?",
+"🏠 Residencial": "🏠 Residential",
+"🏠 Limpieza de patio": "🏠 Yard cleaning",
+"Recogido, desodorización y desinfección. 1 visita semanal.": "Pickup, deodorizing and disinfection. 1 weekly visit.",
+"$20/semana": "$20/week",
+"🧳 Cuido corto A": "🧳 Short-term care A",
+"Limpieza de patio + alimentación. 1 visita diaria.": "Yard cleaning + feeding. 1 daily visit.",
+"$25/día": "$25/day",
+"🐕 Cuido corto B": "🐕 Short-term care B",
+"Limpieza de patio + alimentación + paseo de 15 min. 1 visita diaria.": "Yard cleaning + feeding + 15-min walk. 1 daily visit.",
+"$45/día": "$45/day",
+"Precios para hasta 2 mascotas. Más mascotas o más visitas se cotizan aparte.": "Prices cover up to 2 pets. More pets or more visits are quoted separately.",
+"🏢 Comercial": "🏢 Commercial",
+"🏢 Condo / HOA": "🏢 Condo / HOA",
+"🚮 Estación de desechos": "🚮 Pet waste station",
+"🎉 Evento especial": "🎉 Special event",
+"✨ Limpieza profunda única": "✨ One-time deep cleaning",
+"¿Qué día prefieres tu primera visita?": "What day would you like your first visit?",
+"Te mostramos los días con espacio en nuestra ruta. Lo confirmamos contigo por WhatsApp.": "These are the days with openings on our route. We'll confirm with you by WhatsApp.",
+"¿Qué días estarás de viaje?": "What days will you be away?",
+"Toca el": "Tap the",
+"primer día": "first day",
+"y luego el": "and then the",
+"último día": "last day",
+"que necesitas cuido. ¿Es un solo día? Tócalo dos veces.": "you need care. Just one day? Tap it twice.",
+"🌙 Necesito más de 1 visita al día": "🌙 I need more than 1 visit a day",
+"(se cotiza aparte)": "(quoted separately)",
+"Fotos de tu patio": "Photos of your yard",
+"(opcional, nos ayuda a ser más precisos)": "(optional, helps us be more accurate)",
+"Toca para subir fotos": "Tap to upload photos",
+"Hasta 5 fotos · JPG, PNG, HEIC": "Up to 5 photos · JPG, PNG, HEIC",
+"¿Algo más que debamos saber?": "Anything else we should know?",
+"⚠️ Nota importante sobre la cotización": "⚠️ Important note about your quote",
+"Esta estimación es": "This estimate is",
+"orientativa": "a guide",
+"y se basa en la información que nos compartes. El precio": "and is based on the information you share with us. The",
+"final y confirmado": "final, confirmed price",
+"lo establecemos durante la primera visita, cuando podemos evaluar el patio en persona: su tamaño real, nivel de acumulación, tipo de terreno y condiciones específicas. La primera visita no tiene costo adicional y siempre acordamos el precio antes de comenzar.": "is set during the first visit, when we can see the yard in person: its actual size, how much waste has built up, the type of ground and any specific conditions. The first visit has no extra cost and we always agree on the price before we start.",
+"Enviar cotización por email": "Send quote request by email",
+"¡Cotización recibida!": "Quote request received!",
+"Gracias por contactarnos. Recibimos tu solicitud y te contactaremos pronto con tu estimado personalizado.": "Thanks for reaching out. We got your request and will contact you soon with your personalized estimate.",
+"← Volver al inicio": "← Back to start",
+"¿Tienes preguntas? 💬": "Have questions? 💬",
+"Escríbenos por WhatsApp. Para cotizar, usa el formulario 📋": "Message us on WhatsApp. For quotes, please use the form 📋",
+"Cancelar": "Cancel",
+"El primer servicio profesional de recogida de desechos, desodorización y sanitización de patios en Puerto Rico.": "Puerto Rico's first professional pet waste removal, deodorizing and yard sanitizing service.",
+"Limpieza y Cuidado Profesional.": "Professional Cleaning & Care.",
+"Limpieza de Patio ($20/semana)": "Yard Cleaning ($20/week)",
+"Cuido Corto de Mascota 🆕": "Short-Term Pet Care 🆕",
+"Contacto": "Contact",
+"💬 Preguntas por WhatsApp": "💬 Questions on WhatsApp",
+"❓ ¿Cómo funciona?": "❓ How it works",
+"Servicio disponible": "Service hours",
+"Lun–Sáb · 8am–5pm": "Mon–Sat · 8am–5pm",
+"© 2025 Pet Sanity PR · Todos los derechos reservados": "© 2025 Pet Sanity PR · All rights reserved",
+"Hecho con 🐾 en Puerto Rico": "Made with 🐾 in Puerto Rico"
+};
+const I18N_ATTR = {
+"¿Cómo te llamas?": "What's your name?",
+"tuemail@ejemplo.com": "youremail@example.com",
+"Calle, número, urbanización": "Street, number, neighborhood",
+"Ej: el patio tiene área de grama y área de cemento, el perro es grande, hay dos zonas separadas...": "E.g.: the yard has grass and concrete areas, the dog is large, there are two separate areas...",
+"Escríbenos por WhatsApp": "Message us on WhatsApp",
+"¿Preguntas? Escríbenos por WhatsApp": "Questions? Message us on WhatsApp",
+"Escoge un número de WhatsApp": "WhatsApp contact"
+};
+const _i18nOrig = new WeakMap();
+const _norm = t => t.replace(/\s+/g, ' ').trim();
+function translateStatic(lang) {
+  const skip = 'script,style,svg,.cal,.cal-picked,.cuido-est,.lang-toggle';
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => n.parentElement && n.parentElement.closest(skip) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+  });
+  let n;
+  while ((n = w.nextNode())) {
+    if (!_i18nOrig.has(n)) {
+      if (!I18N[_norm(n.nodeValue)]) continue;
+      _i18nOrig.set(n, n.nodeValue);
+    }
+    const es = _i18nOrig.get(n);
+    n.nodeValue = lang === 'en' ? es.match(/^\s*/)[0] + I18N[_norm(es)] + es.match(/\s*$/)[0] : es;
+  }
+  document.querySelectorAll('[placeholder],[title],[aria-label]').forEach(el => {
+    ['placeholder', 'title', 'aria-label'].forEach(a => {
+      if (!el.hasAttribute(a)) return;
+      const key = 'es' + a.replace(/-./g, m => m[1].toUpperCase()).replace(/^./, c => c.toUpperCase());
+      if (!(key in el.dataset)) { if (!I18N_ATTR[el.getAttribute(a)]) return; el.dataset[key] = el.getAttribute(a); }
+      el.setAttribute(a, lang === 'en' ? I18N_ATTR[el.dataset[key]] : el.dataset[key]);
+    });
+  });
+}
+function setLang(lang, fromClick) {
+  LANG = lang === 'en' ? 'en' : 'es';
+  document.documentElement.lang = LANG;
+  document.title = L('Pet Sanity PR | Limpieza y Cuidado Profesional', 'Pet Sanity PR | Professional Cleaning & Care');
+  translateStatic(LANG);
+  document.querySelectorAll('.lang-toggle button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
+  try { localStorage.setItem('ps_lang', LANG); } catch (e) {}
+  if (typeof calVisit !== 'undefined') { calVisit.render(); calCuido.render(); updateCuidoEstimate(); }
+  if (typeof setWALinks === 'function') setWALinks();
+  if (fromClick && window.gtag) gtag('event', 'language_switch', { idioma: LANG });
+}
+// Las opciones sin value usan su texto como valor: se fija antes de traducir para que la zona enviada siga en español
+document.querySelectorAll('option:not([value])').forEach(o => o.setAttribute('value', o.textContent));
+document.querySelectorAll('.lang-toggle button').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang !== LANG) setLang(b.dataset.lang, true); }));
+
 // ── Dog stepper ────────────────────────────────────
 function changeDogs(d) {
   const el = document.getElementById('f-dogs');
@@ -863,11 +1082,11 @@ async function sendToEmail() {
   const notes  = document.getElementById('f-notes').value.trim();
   const street = document.getElementById('f-street').value.trim();
 
-  if (!name)  { alert('Por favor escribe tu nombre 👤'); return; }
-  if (!email) { alert('Por favor escribe tu email ✉️'); return; }
-  if (!phone) { alert('Por favor escribe tu número de teléfono 📱'); return; }
-  if (!zone)  { alert('Por favor selecciona tu zona 📍'); return; }
-  if (!size)  { alert('Por favor selecciona el tamaño de tu patio 📐'); return; }
+  if (!name)  { alert(L('Por favor escribe tu nombre 👤', 'Please enter your name 👤')); return; }
+  if (!email) { alert(L('Por favor escribe tu email ✉️', 'Please enter your email ✉️')); return; }
+  if (!phone) { alert(L('Por favor escribe tu número de teléfono 📱', 'Please enter your phone number 📱')); return; }
+  if (!zone)  { alert(L('Por favor selecciona tu zona 📍', 'Please select your area 📍')); return; }
+  if (!size)  { alert(L('Por favor selecciona el tamaño de tu patio 📐', 'Please select your yard size 📐')); return; }
 
   const sizeMap = {
     small: 'Pequeño (menos de 500 ft²)',
@@ -883,18 +1102,18 @@ async function sendToEmail() {
   // Agenda
   const wantsCuido = isCuido();
   const wantsVisit = needsVisitDate();
-  if (!services) { alert('Por favor escoge al menos un servicio ✅'); return; }
-  if (wantsVisit && !calVisit.start) { alert('Por favor escoge el día de tu primera visita 📅'); return; }
+  if (!services) { alert(L('Por favor escoge al menos un servicio ✅', 'Please choose at least one service ✅')); return; }
+  if (wantsVisit && !calVisit.start) { alert(L('Por favor escoge el día de tu primera visita 📅', 'Please choose the day for your first visit 📅')); return; }
   if (wantsCuido) {
-    if (!calCuido.start || !calCuido.end) { alert('Por favor escoge el primer y último día del cuido 🧳 (si es un solo día, tócalo dos veces)'); return; }
+    if (!calCuido.start || !calCuido.end) { alert(L('Por favor escoge el primer y último día del cuido 🧳 (si es un solo día, tócalo dos veces)', 'Please choose the first and last day of care 🧳 (for a single day, tap it twice)')); return; }
   }
   const doubleVisit = wantsCuido && document.getElementById('f-double').checked;
   const agenda = [];
-  if (wantsVisit) agenda.push('📅 Primera visita solicitada: ' + prettyDate(calVisit.start) + ' (~' + visitMinutes() + ' min)');
+  if (wantsVisit) agenda.push('📅 Primera visita solicitada: ' + prettyDateES(calVisit.start) + ' (~' + visitMinutes() + ' min)');
   if (wantsCuido) {
     const opt = cuidoOption();
     agenda.push('🧳 Cuido corto, Opción ' + opt + (opt === 'A' ? ' (patio + alimentación)' : ' (patio + alimentación + paseo 15 min)') +
-      ': ' + prettyDate(calCuido.start) + ' → ' + prettyDate(calCuido.end) +
+      ': ' + prettyDateES(calCuido.start) + ' → ' + prettyDateES(calCuido.end) +
       ' (' + rangeDays(calCuido.start, calCuido.end) + ' días, ' + (doubleVisit ? 'PIDE MÁS DE 1 VISITA/DÍA' : '1 visita/día') + ')');
     agenda.push('💵 Estimado cuido: $' + cuidoTotal() + (cuidoNeedsQuote() ? ' + adicional por cotizar (mascotas extra o visitas extra)' : ''));
   }
@@ -911,19 +1130,19 @@ async function sendToEmail() {
   const setBtnText = (txt) => {
     btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:10px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="white" style="animation:spin 1s linear infinite"><path d="M12 2a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8V2z"/></svg>' + txt + '</span>';
   };
-  setBtnText('Enviando...');
+  setBtnText(L('Enviando...', 'Sending...'));
 
   // Intentar subir fotos a Drive: si falla, la cotización igual se envía
   let photoUrls = [];
   if (hasPhotos) {
-    setBtnText('Subiendo ' + photoFiles.length + ' foto(s)...');
+    setBtnText(L('Subiendo ' + photoFiles.length + ' foto(s)...', 'Uploading ' + photoFiles.length + ' photo(s)...'));
     try {
       photoUrls = await uploadPhotosToDrive(photoFiles, name);
     } catch (err) {
       console.warn('Error subiendo fotos a Drive:', err);
       photoUrls = []; // continuar sin fotos, la cotización va igual
     }
-    setBtnText('Enviando...');
+    setBtnText(L('Enviando...', 'Sending...'));
   }
 
   // Construir el mensaje
@@ -932,6 +1151,7 @@ async function sendToEmail() {
     : (hasPhotos ? '📸 El cliente intentó subir fotos pero hubo un problema. Llámalo para pedirlas.' : '');
 
   const mensaje = [
+    LANG === 'en' ? '🌐 El cliente usó la página en INGLÉS: contéstale en inglés.' : '',
     ...agenda,
     notes ? `Notas: ${notes}` : '',
     `Tamaño del patio: ${sizeMap[size] || size}`,
@@ -954,7 +1174,8 @@ async function sendToEmail() {
     cuidoStart:  wantsCuido ? calCuido.start : '',
     cuidoEnd:    wantsCuido ? calCuido.end : '',
     cuidoVisits: wantsCuido ? (doubleVisit ? '2' : '1') : '',
-    cuidoOption: wantsCuido ? cuidoOption() : ''
+    cuidoOption: wantsCuido ? cuidoOption() : '',
+    lang: LANG
   });
 
   // Analytics: cotización enviada
@@ -1002,7 +1223,7 @@ function resetCotizacion() {
   const btn = document.querySelector('.submit-btn');
   if (btn) {
     btn.disabled = false;
-    btn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Enviar cotización por email';
+    btn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> ' + L('Enviar cotización por email', 'Send quote request by email');
   }
 
   // Mostrar formulario, ocultar éxito
@@ -1036,13 +1257,17 @@ const SCHED_CFG = {
 };
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DIAS  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const pad = n => String(n).padStart(2, '0');
 const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
 const fromIso = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
 const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 const rangeDays = (a, b) => Math.round((fromIso(b) - fromIso(a)) / 86400000) + 1;
-const prettyDate = s => { const d = fromIso(s); return DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()]; };
+// prettyDateES: siempre en español (va en el email al negocio). prettyDate: en el idioma de la página.
+const prettyDateES = s => { const d = fromIso(s); return DIAS[d.getDay()] + ' ' + d.getDate() + ' de ' + MESES[d.getMonth()]; };
+const prettyDate = s => { const d = fromIso(s); return LANG === 'en' ? DAYS_EN[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate() : prettyDateES(s); };
 
 // Minutos que necesita la primera visita según lo que escogió el cliente
 function visitMinutes() {
@@ -1117,7 +1342,7 @@ function makeCalendar(elId, pickedId, mode, onChange) {
   cal.render = () => render();
 
   async function render() {
-    if (!el.innerHTML) el.innerHTML = '<div class="cal-loading">Cargando disponibilidad…</div>';
+    if (!el.innerHTML) el.innerHTML = '<div class="cal-loading">' + L('Cargando disponibilidad…', 'Loading availability…') + '</div>';
     const data = await loadMonth(cal.y, cal.m);
     const need = needMin();
     const first = new Date(cal.y, cal.m, 1);
@@ -1127,11 +1352,11 @@ function makeCalendar(elId, pickedId, mode, onChange) {
     const canNext = new Date(cal.y, cal.m + 1, 1) <= addDays(today, SCHED_CFG.maxAheadDays);
 
     let h = `<div class="cal-head">
-      <button type="button" class="cal-nav" ${canPrev ? '' : 'disabled'} data-nav="-1" aria-label="Mes anterior">‹</button>
-      <div class="cal-title">${MESES[cal.m]} ${cal.y}</div>
-      <button type="button" class="cal-nav" ${canNext ? '' : 'disabled'} data-nav="1" aria-label="Mes siguiente">›</button>
+      <button type="button" class="cal-nav" ${canPrev ? '' : 'disabled'} data-nav="-1" aria-label="${L('Mes anterior', 'Previous month')}">‹</button>
+      <div class="cal-title">${L(MESES[cal.m], MONTHS[cal.m])} ${cal.y}</div>
+      <button type="button" class="cal-nav" ${canNext ? '' : 'disabled'} data-nav="1" aria-label="${L('Mes siguiente', 'Next month')}">›</button>
     </div><div class="cal-grid">`;
-    ['D','L','M','M','J','V','S'].forEach(d => h += `<div class="cal-dow">${d}</div>`);
+    (LANG === 'en' ? ['S','M','T','W','T','F','S'] : ['D','L','M','M','J','V','S']).forEach(d => h += `<div class="cal-dow">${d}</div>`);
     for (let i = 0; i < first.getDay(); i++) h += '<div></div>';
     for (let d = 1; d <= daysInMonth; d++) {
       const dt = new Date(cal.y, cal.m, d), key = iso(dt), st = dayStatus(dt, data, isCuido, need);
@@ -1141,13 +1366,13 @@ function makeCalendar(elId, pickedId, mode, onChange) {
       const clickable = st === 'open' || st === 'few';
       h += `<button type="button" class="cal-day s-${st}${sel ? ' sel' : ''}${inRange ? ' in-range' : ''}"
               ${clickable ? '' : 'disabled'} data-date="${key}"
-              title="${st === 'full' ? 'Sin espacio en la ruta' : st === 'closed' ? 'Cerrado' : st === 'few' ? 'Pocos espacios' : ''}">${d}</button>`;
+              title="${st === 'full' ? L('Sin espacio en la ruta', 'Fully booked') : st === 'closed' ? L('Cerrado', 'Closed') : st === 'few' ? L('Pocos espacios', 'Few openings') : ''}">${d}</button>`;
     }
     h += `</div><div class="cal-legend">
-      <span><i class="lg lg-open"></i>Disponible</span>
-      ${data.live ? '<span><i class="lg lg-few"></i>Pocos espacios</span><span><i class="lg lg-full"></i>Sin espacio</span>' : ''}
+      <span><i class="lg lg-open"></i>${L('Disponible', 'Available')}</span>
+      ${data.live ? '<span><i class="lg lg-few"></i>' + L('Pocos espacios', 'Few openings') + '</span><span><i class="lg lg-full"></i>' + L('Sin espacio', 'Fully booked') + '</span>' : ''}
     </div>`;
-    if (!data.live) h += '<div class="cal-note">Fechas sujetas a confirmación por WhatsApp.</div>';
+    if (!data.live) h += '<div class="cal-note">' + L('Fechas sujetas a confirmación por WhatsApp.', 'Dates subject to confirmation by WhatsApp.') + '</div>';
     el.innerHTML = h;
     el.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
       cal.m += Number(b.dataset.nav);
@@ -1174,7 +1399,7 @@ function makeCalendar(elId, pickedId, mode, onChange) {
     else if (!cal.start || cal.end || key < cal.start) { cal.start = key; cal.end = null; }
     else if (key === cal.start) { cal.end = key; }
     else if (rangeHasBlocked(cal.start, key)) {
-      alert('Hay un día sin espacio dentro de ese rango. Escríbenos por WhatsApp y lo coordinamos 🙏');
+      alert(L('Hay un día sin espacio dentro de ese rango. Escríbenos por WhatsApp y lo coordinamos 🙏', 'There is a fully booked day in that range. Message us on WhatsApp and we will work it out 🙏'));
       return;
     } else { cal.end = key; }
     render();
@@ -1182,14 +1407,14 @@ function makeCalendar(elId, pickedId, mode, onChange) {
 
   function updateLabel() {
     if (!isCuido) {
-      picked.textContent = cal.start ? '✅ ' + prettyDate(cal.start) + ' · te confirmamos la hora por WhatsApp' : 'Toca un día disponible';
+      picked.textContent = cal.start ? '✅ ' + prettyDate(cal.start) + L(' · te confirmamos la hora por WhatsApp', ' · we will confirm the time by WhatsApp') : L('Toca un día disponible', 'Tap an available day');
     } else if (cal.start && cal.end) {
       const n = rangeDays(cal.start, cal.end);
-      picked.textContent = n === 1 ? '✅ ' + prettyDate(cal.start) + ' · 1 día'
-        : '✅ ' + prettyDate(cal.start) + ' → ' + prettyDate(cal.end) + ' · ' + n + ' días';
+      picked.textContent = n === 1 ? '✅ ' + prettyDate(cal.start) + L(' · 1 día', ' · 1 day')
+        : '✅ ' + prettyDate(cal.start) + ' → ' + prettyDate(cal.end) + ' · ' + n + L(' días', ' days');
     } else if (cal.start) {
-      picked.textContent = 'Desde ' + prettyDate(cal.start) + '. Ahora toca el último día';
-    } else picked.textContent = 'Escoge tus fechas';
+      picked.textContent = L('Desde ' + prettyDate(cal.start) + '. Ahora toca el último día', 'From ' + prettyDate(cal.start) + '. Now tap the last day');
+    } else picked.textContent = L('Escoge tus fechas', 'Choose your dates');
     picked.classList.toggle('ok', !isCuido ? !!cal.start : !!(cal.start && cal.end));
   }
 
@@ -1213,9 +1438,12 @@ function updateCuidoEstimate() {
   const days = rangeDays(calCuido.start, calCuido.end);
   const opt = cuidoOption();
   box.style.display = 'block';
-  box.innerHTML = `<strong>Estimado: $${cuidoTotal()}</strong> · Opción ${opt} · ${days} día${days > 1 ? 's' : ''} × $${SCHED_CFG.cuidoPrice[opt]}`
+  box.innerHTML = (LANG === 'en'
+      ? `<strong>Estimate: $${cuidoTotal()}</strong> · Option ${opt} · ${days} day${days > 1 ? 's' : ''} × $${SCHED_CFG.cuidoPrice[opt]}`
+      : `<strong>Estimado: $${cuidoTotal()}</strong> · Opción ${opt} · ${days} día${days > 1 ? 's' : ''} × $${SCHED_CFG.cuidoPrice[opt]}`)
     + (cuidoNeedsQuote()
-        ? '<br>➕ Como tienes más de 2 mascotas o pediste más de 1 visita al día, te enviamos el precio final por WhatsApp.'
+        ? L('<br>➕ Como tienes más de 2 mascotas o pediste más de 1 visita al día, te enviamos el precio final por WhatsApp.',
+            '<br>➕ Since you have more than 2 pets or asked for more than 1 visit a day, we will send you the final price by WhatsApp.')
         : '');
 }
 
@@ -1250,9 +1478,14 @@ changeDogs = d => { _origChangeDogs(d); updateCuidoEstimate(); };
 syncSchedule();
 
 // ── WhatsApp: solo para preguntas ─────────────────
-const WA_TEXT = 'Hola Pet Sanity PR 👋 Tengo una pregunta: ';
+const waText = () => L('Hola Pet Sanity PR 👋 Tengo una pregunta: ', 'Hi Pet Sanity PR 👋 I have a question: ');
+function setWALinks() {
+  document.querySelectorAll('[data-wa]').forEach(a => {
+    a.href = 'https://wa.me/' + a.dataset.wa + '?text=' + encodeURIComponent(waText());
+  });
+}
+setWALinks();
 document.querySelectorAll('[data-wa]').forEach(a => {
-  a.href = 'https://wa.me/' + a.dataset.wa + '?text=' + encodeURIComponent(WA_TEXT);
   a.addEventListener('click', () => {
     // Analytics: clic en WhatsApp
     if (window.gtag) gtag('event', 'whatsapp_click', { numero: a.dataset.wa });
@@ -1268,6 +1501,13 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Idioma inicial: ?lang=en en el enlace, o lo que la persona escogió antes. Si no, español.
+(function () {
+  let lang = new URLSearchParams(location.search).get('lang');
+  if (lang !== 'en' && lang !== 'es') { try { lang = localStorage.getItem('ps_lang'); } catch (e) { lang = null; } }
+  if (lang === 'en') setLang('en');
+})();
 </script>
 
 <style>
@@ -1309,6 +1549,12 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 .svc-opt small { font-weight:500; color:var(--text-mid); font-size:12.5px; }
 .svc-opt-price { font-family:'Fredoka',sans-serif; font-size:18px; color:var(--green); margin-top:6px; }
 @media(max-width:820px){ .res-group { grid-template-columns:1fr; } }
+.nav-right { display:flex; align-items:center; gap:12px; }
+.lang-toggle { display:inline-flex; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28); border-radius:50px; padding:3px; }
+.lang-toggle button { border:none; background:transparent; color:rgba(255,255,255,.85); font-family:'Nunito',sans-serif; font-size:13px; font-weight:800; letter-spacing:.04em; padding:6px 11px; border-radius:50px; cursor:pointer; line-height:1; }
+.lang-toggle button[aria-pressed="true"] { background:var(--lime); color:var(--green-dark); }
+.lang-toggle button:focus-visible { outline:2px solid var(--yellow); outline-offset:2px; }
+@media(max-width:480px){ nav { padding:0 14px; } .nav-right { gap:8px; } .nav-cta { padding:9px 13px !important; font-size:13px !important; } .lang-toggle button { padding:6px 9px; } }
 .cuido-est { background:#F0FAF6; border:2px solid var(--green); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--green-dark); }
 </style>
 </body>
